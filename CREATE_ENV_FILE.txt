@@ -1,0 +1,25 @@
+INSTRUCTIONS TO CREATE .env FILE:
+
+1. In your project folder (C:\Users\HAMSE CHOCO\OneDrive\Desktop\TTRAVEL)
+2. Create a NEW file named exactly: .env
+   (Just the dot and "env" - no extension)
+
+3. Copy and paste this EXACT content:
+
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=
+DB_NAME=travel_agency
+PORT=3000
+JWT_SECRET=secret123
+
+4. Save the file
+
+5. Restart your server (npm start)
+
+IMPORTANT:
+- File name must be exactly: .env (with the dot at the beginning)
+- DB_PASSWORD= must be empty (no spaces, no quotes)
+- Make sure MySQL is running in XAMPP
+- Make sure travel_agency database exists
+

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flights — TravelCo</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="app-sidebar">
+            <div class="brand"><span class="icon">✈</span><span class="name">TravelCo</span></div>
+            <nav class="nav">
+                <a href="/dashboard" class="nav-item">📊 Dashboard</a>
+                <a href="/flight-search" class="nav-item active">✈️ Flights</a>
+                <a href="/hotel-search" class="nav-item">🏨 Hotels</a>
+                <a href="/packages" class="nav-item">📦 Packages</a>
+                <a href="#" class="nav-item logout" data-logout><span class="logout-spinner"></span><span class="logout-text">🚪 Logout</span></a>
+            </nav>
+        </aside>
+        <main class="app-main">
+            <header class="app-header">
+                <div class="search-wrap"><input type="text" placeholder="Search…"></div>
+                <a href="/dashboard" class="btn-ghost">← Back</a>
+            </header>
+
+            <div class="search-hero">
+                <div class="trip-type-row">
+                    <button type="button" class="trip-type-btn active" data-type="round">Round trip</button>
+                    <button type="button" class="trip-type-btn" data-type="oneway">One way</button>
+                </div>
+                <form id="flightSearchForm" class="search-form-grid">
+                    <div class="form-group">
+                        <label>From</label>
+                        <input type="text" id="origin" placeholder="e.g. JFK" value="JFK">
+                    </div>
+                    <div class="form-group">
+                        <label>To</label>
+                        <input type="text" id="destination" placeholder="e.g. LHR" value="LHR">
+                    </div>
+                    <div class="form-group">
+                        <label>Depart</label>
+                        <input type="date" id="departDate" value="2026-02-15">
+                    </div>
+                    <div class="form-group">
+                        <label>Return</label>
+                        <input type="date" id="returnDate" value="2026-02-22">
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button type="submit" class="btn-primary">Search flights</button>
+                    </div>
+                </form>
+            </div>
+
+            <div style="display: flex; gap: 24px;">
+                <div class="filter-sidebar">
+                    <h3>Filters</h3>
+                    <div class="filter-section">
+                        <h4>Price</h4>
+                        <input type="range" min="200" max="1200" value="600" class="price-slider">
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted);"><span>$200</span><span>$1,200</span></div>
+                    </div>
+                    <div class="filter-section">
+                        <h4>Stops</h4>
+                        <div class="checkbox-group"><label><input type="checkbox"> Direct</label></div>
+                        <div class="checkbox-group"><label><input type="checkbox" checked> 1 stop</label></div>
+                    </div>
+                </div>
+                <div style="flex: 1;">
+                    <div class="results-toolbar">
+                        <h2 id="flightCount">Flights</h2>
+                        <div style="display: flex; gap: 8px;">
+                            <button type="button" class="trip-type-btn active">Cheapest</button>
+                            <button type="button" class="trip-type-btn">Fastest</button>
+                        </div>
+                    </div>
+                    <div id="flightResults"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="/js/modal.js"></script>
+    <script src="/js/booking.js"></script>
+</body>
+</html>

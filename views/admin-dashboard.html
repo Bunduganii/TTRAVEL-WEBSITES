@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — TravelCo</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="app-sidebar">
+            <div class="brand">
+                <span class="icon">✈</span>
+                <span class="name">TravelCo</span>
+            </div>
+            <nav class="nav">
+                <a href="/admin" class="nav-item active">📊 Dashboard</a>
+                <a href="/flight-search" class="nav-item">✈️ Flights</a>
+                <a href="/hotel-search" class="nav-item">🏨 Hotels</a>
+                <a href="/packages" class="nav-item">📦 Packages</a>
+                <a href="#adminBookings" class="nav-item">📅 Bookings</a>
+                <a href="#adminUsers" class="nav-item">👥 Users</a>
+                <a href="#" class="nav-item logout" id="adminLogout"><span class="logout-spinner"></span><span class="logout-text">🚪 Logout</span></a>
+            </nav>
+        </aside>
+
+        <main class="app-main">
+            <header class="app-header">
+                <div class="search-wrap">
+                    <input type="text" id="adminSearch" placeholder="Search bookings, flights, users…">
+                </div>
+                <div class="user-menu">
+                    <div class="user-avatar" id="adminAvatar">A</div>
+                    <div class="user-info">
+                        <div class="name" id="adminName">Admin</div>
+                        <div class="role">Admin</div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="section-head">
+                <h2>Dashboard</h2>
+                <p>Overview of your travel platform.</p>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="value" id="statRevenue">$—</div>
+                    <div class="label">Revenue</div>
+                    <div class="change positive">+5% vs last month</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="statBookings">—</div>
+                    <div class="label">Bookings</div>
+                    <div class="change positive">+12% vs last month</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="statUsers">—</div>
+                    <div class="label">Users</div>
+                    <div class="change positive">+2% vs last month</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="statPending">—</div>
+                    <div class="label">Pending</div>
+                    <div class="change negative">Requires attention</div>
+                </div>
+            </div>
+
+            <div class="card" style="padding: 28px; margin-bottom: 24px;">
+                <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 20px;">Quick actions</h3>
+                <div class="quick-actions" style="grid-template-columns: repeat(4, 1fr);">
+                    <a href="/flight-search" class="quick-action"><span class="icon">✈️</span><span>Flights</span></a>
+                    <a href="/hotel-search" class="quick-action"><span class="icon">🏨</span><span>Hotels</span></a>
+                    <a href="/packages" class="quick-action"><span class="icon">📦</span><span>Packages</span></a>
+                    <button type="button" class="quick-action" onclick="showAddModal('flight')" style="background:transparent;border:none;cursor:pointer;text-align:left;padding:0;"><span class="icon">➕</span><span>Add Flight</span></button>
+                </div>
+                <div class="quick-actions" style="grid-template-columns: repeat(3, 1fr); margin-top: 12px;">
+                    <button type="button" class="quick-action" onclick="showAddModal('hotel')" style="background:transparent;border:none;cursor:pointer;text-align:left;padding:0;"><span class="icon">➕</span><span>Add Hotel</span></button>
+                    <button type="button" class="quick-action" onclick="showAddModal('package')" style="background:transparent;border:none;cursor:pointer;text-align:left;padding:0;"><span class="icon">➕</span><span>Add Package</span></button>
+                    <a href="/flight-search" class="quick-action"><span class="icon">📅</span><span>New booking</span></a>
+                </div>
+            </div>
+
+            <div class="section-head" style="margin-top: 32px;">
+                <h2>Analytics</h2>
+                <p>Revenue trends and booking insights.</p>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+                <div class="card" style="padding: 24px;">
+                    <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">Revenue Trend</h3>
+                    <canvas id="revenueChart" style="max-height: 280px;"></canvas>
+                </div>
+                <div class="card" style="padding: 24px;">
+                    <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">Bookings by Type</h3>
+                    <canvas id="bookingsChart" style="max-height: 280px;"></canvas>
+                </div>
+            </div>
+
+            <div id="adminBookings" class="section-head">
+                <h2>Recent bookings</h2>
+                <p>Latest activity. Use search to filter.</p>
+            </div>
+            <div id="adminBookingsWrap" class="card" style="padding: 0; overflow: hidden;">
+                <div id="adminBookingsSkeleton" class="skeleton-table"></div>
+                <div id="adminBookingsList" style="display: none;"></div>
+                <div id="adminBookingsEmpty" style="display: none; padding: 32px; text-align: center; color: var(--text-muted);">No bookings yet.</div>
+            </div>
+            <div id="adminUsers" class="section-head" style="margin-top: 32px;">
+                <h2>Users</h2>
+                <p>Registered customers and admins.</p>
+            </div>
+            <div id="adminUsersWrap" class="card" style="padding: 0; overflow: hidden;">
+                <div id="adminUsersSkeleton" class="skeleton-table"></div>
+                <div id="adminUsersList" style="display: none;"></div>
+                <div id="adminUsersEmpty" style="display: none; padding: 32px; text-align: center; color: var(--text-muted);">No users.</div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Flight Modal -->
+    <div id="addFlightModal" class="modal-overlay">
+        <div class="modal-box" style="max-width: 600px;">
+            <h2>Add New Flight</h2>
+            <form id="addFlightForm">
+                <div class="form-group">
+                    <label>Airline</label>
+                    <input type="text" name="airline" required placeholder="e.g. American Airlines">
+                </div>
+                <div class="form-group">
+                    <label>Flight Number</label>
+                    <input type="text" name="flight_number" required placeholder="e.g. AA123">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-group">
+                        <label>Origin Code</label>
+                        <input type="text" name="origin_code" required placeholder="e.g. JFK" maxlength="3">
+                    </div>
+                    <div class="form-group">
+                        <label>Origin Name</label>
+                        <input type="text" name="origin_name" required placeholder="e.g. New York">
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-group">
+                        <label>Destination Code</label>
+                        <input type="text" name="destination_code" required placeholder="e.g. LHR" maxlength="3">
+                    </div>
+                    <div class="form-group">
+                        <label>Destination Name</label>
+                        <input type="text" name="destination_name" required placeholder="e.g. London">
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-group">
+                        <label>Departure Date</label>
+                        <input type="date" name="departure_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Departure Time</label>
+                        <input type="time" name="departure_time" required>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-group">
+                        <label>Arrival Date</label>
+                        <input type="date" name="arrival_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Arrival Time</label>
+                        <input type="time" name="arrival_time" required>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+                    <div class="form-group">
+                        <label>Price ($)</label>
+                        <input type="number" name="price" required min="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Fare Type</label>
+                        <select name="fare_type">
+                            <option>Economy</option>
+                            <option>Business</option>
+                            <option>First Class</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Available Seats</label>
+                        <input type="number" name="available_seats" min="1" value="100">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 12px; margin-top: 20px;">
+                    <button type="submit" class="btn-primary" style="flex: 1;">Create Flight</button>
+                    <button type="button" class="btn-secondary" onclick="closeAddModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Hotel Modal -->
+    <div id="addHotelModal" class="modal-overlay">
+        <div class="modal-box" style="max-width: 600px;">
+            <h2>Add New Hotel</h2>
+            <form id="addHotelForm">
+                <div class="form-group">
+                    <label>Hotel Name</label>
+                    <input type="text" name="name" required placeholder="e.g. Grand Plaza Hotel">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-group">
+                        <label>City</label>
+                        <input type="text" name="city" required placeholder="e.g. Paris">
+                    </div>
+                    <div class="form-group">
+                        <label>Country</label>
+                        <input type="text" name="country" required placeholder="e.g. France">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Location/Address</label>
+                    <input type="text" name="location" required placeholder="e.g. 123 Main Street">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-group">
+                        <label>Star Rating</label>
+                        <select name="star_rating" required>
+                            <option value="3">3 Stars</option>
+                            <option value="4">4 Stars</option>
+                            <option value="5">5 Stars</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Price per Night ($)</label>
+                        <input type="number" name="price_per_night" required min="0" step="0.01">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" rows="3" placeholder="Hotel description..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Amenities (comma-separated)</label>
+                    <input type="text" name="amenities" placeholder="e.g. WiFi, Pool, Gym, Spa">
+                </div>
+                <div class="form-group">
+                    <label>Image URL</label>
+                    <input type="url" name="image_url" placeholder="https://...">
+                </div>
+                <div style="display: flex; gap: 12px; margin-top: 20px;">
+                    <button type="submit" class="btn-primary" style="flex: 1;">Create Hotel</button>
+                    <button type="button" class="btn-secondary" onclick="closeAddModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Package Modal -->
+    <div id="addPackageModal" class="modal-overlay">
+        <div class="modal-box" style="max-width: 600px;">
+            <h2>Add New Package</h2>
+            <form id="addPackageForm">
+                <div class="form-group">
+                    <label>Package Title</label>
+                    <input type="text" name="title" required placeholder="e.g. Santorini Sunset Getaway">
+                </div>
+                <div class="form-group">
+                    <label>Destination</label>
+                    <input type="text" name="destination" required placeholder="e.g. Santorini, Greece">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-group">
+                        <label>Trip Type</label>
+                        <select name="trip_type" required>
+                            <option>Adventure</option>
+                            <option>Romantic</option>
+                            <option>Cultural</option>
+                            <option>Beach</option>
+                            <option>Family</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Duration (days)</label>
+                        <input type="number" name="duration_days" required min="1" value="7">
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-group">
+                        <label>Original Price ($)</label>
+                        <input type="number" name="original_price" required min="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Discounted Price ($)</label>
+                        <input type="number" name="discounted_price" required min="0" step="0.01">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" rows="3" placeholder="Package description..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Inclusions (comma-separated)</label>
+                    <input type="text" name="inclusions" placeholder="e.g. Flight Included, 4-Star Hotel, Breakfast, Airport Transfer">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-group">
+                        <label>Rating</label>
+                        <input type="number" name="rating" min="0" max="5" step="0.1" value="4.5">
+                    </div>
+                    <div class="form-group">
+                        <label>Image URL</label>
+                        <input type="url" name="image_url" placeholder="https://...">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 12px; margin-top: 20px;">
+                    <button type="submit" class="btn-primary" style="flex: 1;">Create Package</button>
+                    <button type="button" class="btn-secondary" onclick="closeAddModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/modal.js"></script>
+    <script src="/js/admin.js"></script>
+</body>
+</html>

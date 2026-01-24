@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create account — TravelCo</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <!-- ============================================ -->
+    <!-- AUTH PAGE: Split layout (form left, hero right) -->
+    <!-- ============================================ -->
+    <div class="auth-page">
+        <!-- Form panel: logo, signup form -->
+        <div class="auth-form-panel">
+            <!-- Logo and brand -->
+            <div class="logo-mark">
+                <span class="icon">✈</span>
+                <span class="word">TravelCo</span>
+            </div>
+            <h1>Create account</h1>
+            <p class="subtitle">Sign up to book flights, hotels, and packages.</p>
+
+            <!-- Signup form: full name, email, phone, password, confirm, submit -->
+            <form id="signupForm">
+                <!-- Full name -->
+                <div class="form-group">
+                    <label for="fullName">Full name</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="fullName" name="fullName" placeholder="Jane Doe" required>
+                        <span class="input-icon">👤</span>
+                    </div>
+                </div>
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <div class="input-wrapper">
+                        <input type="email" id="email" name="email" placeholder="you@example.com" required>
+                        <span class="input-icon">✉</span>
+                    </div>
+                </div>
+                <!-- Phone (optional) -->
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <div class="input-wrapper">
+                        <input type="tel" id="phone" name="phone" placeholder="+1 234 567 8900">
+                        <span class="input-icon">📞</span>
+                    </div>
+                </div>
+                <!-- Password with visibility toggle (eye icon) -->
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper password-input-wrapper">
+                        <input type="password" id="password" name="password" placeholder="••••••••" required minlength="6">
+                        <button type="button" class="password-toggle" aria-label="Show password" title="Show password">
+                            <span class="password-toggle-icon">👁</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Confirm password with visibility toggle -->
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm password</label>
+                    <div class="input-wrapper password-input-wrapper">
+                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="••••••••" required>
+                        <button type="button" class="password-toggle" aria-label="Show password" title="Show password">
+                            <span class="password-toggle-icon">👁</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Submit button with loading state -->
+                <button type="submit" class="btn-primary" id="signupBtn">
+                    <span class="btn-text">Create account →</span>
+                    <span class="btn-spinner" aria-hidden="true"></span>
+                </button>
+            </form>
+
+            <!-- Divider and link to login -->
+            <div class="auth-divider">or</div>
+            <p class="auth-footer-link">Already have an account? <a href="/">Sign in</a></p>
+        </div>
+
+        <!-- Hero panel: decorative quote -->
+        <div class="auth-hero-panel">
+            <div class="auth-hero-content">
+                <blockquote>"Adventure is out there. Create your account and start exploring."</blockquote>
+                <cite>— TravelCo</cite>
+            </div>
+        </div>
+    </div>
+    <script src="/js/signup.js"></script>
+</body>
+</html>

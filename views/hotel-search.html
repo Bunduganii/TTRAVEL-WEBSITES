@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotels — TravelCo</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="app-sidebar">
+            <div class="brand"><span class="icon">✈</span><span class="name">TravelCo</span></div>
+            <nav class="nav">
+                <a href="/dashboard" class="nav-item">📊 Dashboard</a>
+                <a href="/flight-search" class="nav-item">✈️ Flights</a>
+                <a href="/hotel-search" class="nav-item active">🏨 Hotels</a>
+                <a href="/packages" class="nav-item">📦 Packages</a>
+                <a href="#" class="nav-item logout" data-logout><span class="logout-spinner"></span><span class="logout-text">🚪 Logout</span></a>
+            </nav>
+        </aside>
+        <main class="app-main">
+            <header class="app-header">
+                <div class="search-wrap"><input type="text" placeholder="Search…"></div>
+                <a href="/dashboard" class="btn-ghost">← Back</a>
+            </header>
+
+            <div class="search-hero">
+                <form id="hotelSearchForm" class="search-form-grid">
+                    <div class="form-group">
+                        <label>Location</label>
+                        <input type="text" id="hotelLocation" placeholder="City or region" value="Tokyo">
+                    </div>
+                    <div class="form-group">
+                        <label>Check-in</label>
+                        <input type="date" id="hotelCheckIn" value="2026-02-15">
+                    </div>
+                    <div class="form-group">
+                        <label>Check-out</label>
+                        <input type="date" id="hotelCheckOut" value="2026-02-18">
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button type="submit" class="btn-primary">Search hotels</button>
+                    </div>
+                </form>
+            </div>
+
+            <div style="display: flex; gap: 24px;">
+                <div class="filter-sidebar">
+                    <h3>Filters</h3>
+                    <div class="filter-section">
+                        <h4>Price / night</h4>
+                        <input type="range" min="50" max="800" value="400" class="price-slider">
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted);"><span>$50</span><span>$800+</span></div>
+                    </div>
+                    <div class="filter-section">
+                        <h4>Stars</h4>
+                        <div class="checkbox-group"><label><input type="checkbox" checked> ★★★★★</label></div>
+                        <div class="checkbox-group"><label><input type="checkbox" checked> ★★★★</label></div>
+                        <div class="checkbox-group"><label><input type="checkbox"> ★★★</label></div>
+                    </div>
+                </div>
+                <div style="flex: 1;">
+                    <div class="results-toolbar">
+                        <h2 id="hotelCount">Hotels</h2>
+                        <select style="padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 14px;">
+                            <option>Recommended</option>
+                            <option>Price: low → high</option>
+                            <option>Price: high → low</option>
+                        </select>
+                    </div>
+                    <div id="hotelResults"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="/js/modal.js"></script>
+    <script src="/js/booking.js"></script>
+</body>
+</html>

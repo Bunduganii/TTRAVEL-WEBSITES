@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in — TravelCo</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <!-- ============================================ -->
+    <!-- AUTH PAGE: Split layout (form left, hero right) -->
+    <!-- ============================================ -->
+    <div class="auth-page">
+        <!-- Form panel: logo, role tabs, login form -->
+        <div class="auth-form-panel">
+            <!-- Logo and brand -->
+            <div class="logo-mark">
+                <span class="icon">✈</span>
+                <span class="word">TravelCo</span>
+            </div>
+            <h1>Sign in</h1>
+            <p class="subtitle">Enter your details to access your account.</p>
+
+            <!-- Role tabs: Customer | Admin (determines login type) -->
+            <div class="role-tabs">
+                <button type="button" class="tab active" data-type="customer">Customer</button>
+                <button type="button" class="tab" data-type="admin">Admin</button>
+            </div>
+
+            <!-- Login form: email, password, submit -->
+            <form id="loginForm">
+                <!-- Email field -->
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <div class="input-wrapper">
+                        <input type="email" id="email" name="email" placeholder="you@example.com" required>
+                        <span class="input-icon">✉</span>
+                    </div>
+                </div>
+                <!-- Password field with visibility toggle (eye icon) -->
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper password-input-wrapper">
+                        <input type="password" id="password" name="password" placeholder="••••••••" required>
+                        <button type="button" class="password-toggle" aria-label="Show password" title="Show password">
+                            <span class="password-toggle-icon">👁</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Submit button with loading state -->
+                <button type="submit" class="btn-primary btn-loading-target" id="loginBtn">
+                    <span class="btn-text">Sign in →</span>
+                    <span class="btn-spinner" aria-hidden="true"></span>
+                </button>
+            </form>
+
+            <!-- Divider and link to signup -->
+            <div class="auth-divider">or</div>
+            <p class="auth-footer-link">No account? <a href="/signup">Create one</a></p>
+        </div>
+
+        <!-- Hero panel: decorative quote -->
+        <div class="auth-hero-panel">
+            <div class="auth-hero-content">
+                <blockquote>"Travel isn't always pretty. It isn't always comfortable. But it's worth it. Every single time."</blockquote>
+                <cite>— TravelCo</cite>
+            </div>
+        </div>
+    </div>
+    <script src="/js/auth.js"></script>
+</body>
+</html>

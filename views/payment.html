@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment — TravelCo</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="app-sidebar">
+            <div class="brand"><span class="icon">✈</span><span class="name">TravelCo</span></div>
+            <nav class="nav">
+                <a href="/dashboard" class="nav-item">📊 Dashboard</a>
+                <a href="/flight-search" class="nav-item">✈️ Flights</a>
+                <a href="/hotel-search" class="nav-item">🏨 Hotels</a>
+                <a href="/packages" class="nav-item">📦 Packages</a>
+                <a href="#" class="nav-item logout" data-logout><span class="logout-spinner"></span><span class="logout-text">🚪 Logout</span></a>
+            </nav>
+        </aside>
+        <main class="app-main">
+            <header class="app-header">
+                <div></div>
+                <a href="/dashboard" class="btn-ghost">← Back</a>
+            </header>
+
+            <div class="payment-layout">
+                <div class="payment-form-area">
+                    <div class="section-head">
+                        <h2>Payment</h2>
+                        <p>Complete your booking securely.</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 24px; color: var(--text-muted); font-size: 14px;">
+                        <span>🔒</span> 128-bit SSL encryption
+                    </div>
+                    <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 14px;">Payment method</h3>
+                    <div class="payment-methods">
+                        <button type="button" class="payment-method-btn active" data-method="card">💳 Card</button>
+                        <button type="button" class="payment-method-btn" data-method="zaad">📱 Zaad</button>
+                        <button type="button" class="payment-method-btn" data-method="edahab">💳 E-Dahab</button>
+                    </div>
+                    <div id="cardForm" style="display: block;">
+                        <form id="paymentForm">
+                            <div class="form-group">
+                                <label for="cardNumber">Card number</label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000" maxlength="19">
+                                    <span class="input-icon">💳</span>
+                                </div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                                <div class="form-group">
+                                    <label for="expiryDate">Expiry</label>
+                                    <input type="text" id="expiryDate" placeholder="MM/YY" maxlength="5">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cvc">CVC</label>
+                                    <div class="input-wrapper">
+                                        <input type="text" id="cvc" placeholder="123" maxlength="4">
+                                        <span class="input-icon">🔒</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="cardholderName">Name on card</label>
+                                <input type="text" id="cardholderName" placeholder="Full name">
+                            </div>
+                        </form>
+                    </div>
+                    <div id="zaadForm" style="display: none;">
+                        <div class="form-group">
+                            <label for="zaadNumber">Zaad number</label>
+                            <input type="text" id="zaadNumber" placeholder="Zaad number">
+                        </div>
+                        <div class="form-group">
+                            <label for="zaadPin">PIN</label>
+                            <input type="password" id="zaadPin" placeholder="PIN">
+                        </div>
+                    </div>
+                    <div id="edahabForm" style="display: none;">
+                        <div class="form-group">
+                            <label for="edahabNumber">E-Dahab number</label>
+                            <input type="text" id="edahabNumber" placeholder="E-Dahab number">
+                        </div>
+                        <div class="form-group">
+                            <label for="edahabPin">PIN</label>
+                            <input type="password" id="edahabPin" placeholder="PIN">
+                        </div>
+                    </div>
+                </div>
+                <div class="payment-summary">
+                    <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400" alt="" style="width: 100%; height: 160px; object-fit: cover; border-radius: var(--radius); margin-bottom: 20px;">
+                    <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;">Booking summary</h3>
+                    <div class="summary-item" style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px;">
+                        <span>Amount</span>
+                        <span id="summaryAmount">$—</span>
+                    </div>
+                    <div class="summary-item" style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px;">
+                        <span>Taxes & fees</span>
+                        <span id="summaryFees">$—</span>
+                    </div>
+                    <div style="border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-weight: 600;">Total</span>
+                            <span class="price" id="summaryTotal" style="font-size: 22px; font-weight: 700; color: var(--primary);">$—</span>
+                        </div>
+                    </div>
+                    <button type="button" id="payNowBtn" class="btn-primary" style="width: 100%; margin-top: 24px;">Pay now</button>
+                    <p style="font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 16px;">By paying you agree to our terms and privacy policy.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="/js/modal.js"></script>
+    <script src="/js/booking.js"></script>
+    <script>
+        (function() {
+            var data = JSON.parse(sessionStorage.getItem('bookingData') || '{}');
+            var amt = parseFloat(data.totalAmount || 0);
+            var fees = Math.round(amt * 0.05);
+            var total = amt + fees;
+            var amountEl = document.getElementById('summaryAmount');
+            var feesEl = document.getElementById('summaryFees');
+            var totalEl = document.getElementById('summaryTotal');
+            if (amountEl) amountEl.textContent = '$' + amt.toFixed(2);
+            if (feesEl) feesEl.textContent = '$' + fees.toFixed(2);
+            if (totalEl) totalEl.textContent = '$' + total.toFixed(2);
+        })();
+    </script>
+</body>
+</html>

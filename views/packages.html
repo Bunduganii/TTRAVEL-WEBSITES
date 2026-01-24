@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Packages — TravelCo</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="app-sidebar">
+            <div class="brand"><span class="icon">✈</span><span class="name">TravelCo</span></div>
+            <nav class="nav">
+                <a href="/dashboard" class="nav-item">📊 Dashboard</a>
+                <a href="/flight-search" class="nav-item">✈️ Flights</a>
+                <a href="/hotel-search" class="nav-item">🏨 Hotels</a>
+                <a href="/packages" class="nav-item active">📦 Packages</a>
+                <a href="#" class="nav-item logout" data-logout><span class="logout-spinner"></span><span class="logout-text">🚪 Logout</span></a>
+            </nav>
+        </aside>
+        <main class="app-main">
+            <header class="app-header">
+                <div class="search-wrap"><input type="text" id="packageSearch" placeholder="Search destinations…"></div>
+                <a href="/dashboard" class="btn-ghost">← Back</a>
+            </header>
+
+            <div class="section-head">
+                <h2>Packages</h2>
+                <p>Curated trips and getaways.</p>
+            </div>
+            <div style="display: flex; gap: 24px; margin-bottom: 24px;">
+                <div class="filter-sidebar">
+                    <h3>Filters</h3>
+                    <div class="filter-section">
+                        <h4>Price</h4>
+                        <input type="range" min="500" max="5000" value="5000" class="price-slider">
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted);"><span>$500</span><span id="priceValue">$5,000</span></div>
+                    </div>
+                    <div class="filter-section">
+                        <h4>Duration</h4>
+                        <div class="checkbox-group"><label><input type="checkbox"> ≤3 days</label></div>
+                        <div class="checkbox-group"><label><input type="checkbox"> 4–7 days</label></div>
+                        <div class="checkbox-group"><label><input type="checkbox"> 8+ days</label></div>
+                    </div>
+                    <div class="filter-section">
+                        <h4>Type</h4>
+                        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                            <button type="button" class="trip-type-btn active">All</button>
+                            <button type="button" class="trip-type-btn">Adventure</button>
+                            <button type="button" class="trip-type-btn">Romantic</button>
+                            <button type="button" class="trip-type-btn">Cultural</button>
+                        </div>
+                    </div>
+                </div>
+                <div style="flex: 1;">
+                    <div class="packages-grid" id="packagesGrid"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="/js/modal.js"></script>
+    <script src="/js/booking.js"></script>
+</body>
+</html>
