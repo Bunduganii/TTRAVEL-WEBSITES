@@ -1,25 +1,36 @@
-INSTRUCTIONS TO CREATE .env FILE:
+═══════════════════════════════════════════════════════════════
+  CREATE .env FILE - COPY THIS EXACT CONTENT
+═══════════════════════════════════════════════════════════════
 
-1. In your project folder (C:\Users\HAMSE CHOCO\OneDrive\Desktop\TTRAVEL)
-2. Create a NEW file named exactly: .env
+STEP 1: Create .env File
+────────────────────────
+1. In your project folder, create a NEW file named: .env
    (Just the dot and "env" - no extension)
 
-3. Copy and paste this EXACT content:
+2. Copy and paste this EXACT content:
 
+───────────────────────────────────────────────────────────────
 DB_HOST=localhost
 DB_USER=root
-DB_PASSWORD=
-DB_NAME=travel_agency
+DB_PASSWORD=123
+DB_NAME=travel_agency_db
 PORT=3000
 JWT_SECRET=secret123
+───────────────────────────────────────────────────────────────
 
-4. Save the file
+3. Save the file
 
-5. Restart your server (npm start)
+IMPORTANT NOTES:
+────────────────
+✅ DB_PASSWORD= has NOTHING after the equals sign (empty password)
+✅ NO quotes around values
+✅ NO spaces around equals sign
+✅ File name must be exactly: .env (with the dot at the beginning)
+✅ Save in the same folder as package.json
 
-IMPORTANT:
-- File name must be exactly: .env (with the dot at the beginning)
-- DB_PASSWORD= must be empty (no spaces, no quotes)
-- Make sure MySQL is running in XAMPP
-- Make sure travel_agency database exists
+VERIFY IT WORKS:
+────────────────
+Run: node check-env.js
+Should show: ✅ DB_PASSWORD is set: (empty)
 
+═══════════════════════════════════════════════════════════════

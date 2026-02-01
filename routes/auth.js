@@ -151,7 +151,7 @@ router.post('/register', async (req, res) => {
         if (error.message.includes('timeout')) {
             errorMessage = 'Database connection timeout. Please check MySQL is running in XAMPP.';
         } else if (error.message.includes('Access denied')) {
-            errorMessage = 'Database access denied. Check .env file and MySQL password.';
+            errorMessage = 'Database access denied. Check your .env file MySQL password. Run: node check-env.js to verify .env file, then node test-db-connection.js to test password. See SETUP_NEW_INSTALLATION.md for help.';
         } else if (error.message.includes("Unknown database")) {
             errorMessage = 'Database "travel_agency_db" does not exist. Please create it in phpMyAdmin and import schema.sql';
         } else if (error.message.includes("doesn't exist")) {

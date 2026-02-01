@@ -127,8 +127,12 @@ TTRAVEL/
 
 ## Installation
 
-1. **Node.js** (v16+): [nodejs.org](https://nodejs.org/)
-2. **MySQL/MariaDB**: e.g. via [XAMPP](https://www.apachefriends.org/)
+### Quick Setup (New Installation)
+
+**📋 See `QUICK_SETUP.txt` or `SETUP_NEW_INSTALLATION.md` for detailed instructions!**
+
+1. **Install Node.js** (v16+): [nodejs.org](https://nodejs.org/)
+2. **Install MySQL/MariaDB**: e.g. via [XAMPP](https://www.apachefriends.org/)
 
 ```bash
 # Clone or download project, then:
@@ -136,25 +140,39 @@ cd TTRAVEL
 npm install
 ```
 
-3. **Environment**: Create `.env` in project root:
+3. **Setup Database**:
+   - Start MySQL in XAMPP
+   - Create database `travel_agency_db` in phpMyAdmin
+   - Import `schema.sql`
 
-```
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=your_mysql_password
-DB_NAME=travel_agency_db
-PORT=3000
-```
+4. **Find MySQL Password**:
+   ```bash
+   node test-db-connection.js
+   ```
+   This will test common passwords and tell you which one works!
 
-4. **Database**: Create `travel_agency_db`, then run `schema.sql` (see [Database Setup](#database-setup)).
+5. **Create `.env` file** in project root:
+   ```
+   DB_HOST=localhost
+   DB_USER=root
+   DB_PASSWORD=your_password_here
+   DB_NAME=travel_agency_db
+   PORT=3000
+   JWT_SECRET=secret123
+   ```
+   **Important**: Replace `your_password_here` with the password from step 4!
 
-5. **Run server**:
+6. **Run server**:
+   ```bash
+   npm start
+   ```
+   You should see: `✅ Database connected successfully`
 
-```bash
-npm start
-```
+7. Open `http://localhost:3000` in your browser.
 
-6. Open `http://localhost:3000` (or the port shown in the console).
+**📋 For detailed setup instructions, see:**
+- `QUICK_SETUP.txt` - Quick reference guide
+- `SETUP_NEW_INSTALLATION.md` - Complete guide with troubleshooting
 
 ---
 

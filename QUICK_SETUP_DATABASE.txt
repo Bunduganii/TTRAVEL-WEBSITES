@@ -1,0 +1,44 @@
+═══════════════════════════════════════════════════════════════
+  QUICK DATABASE SETUP FOR YOUR FRIEND'S LAPTOP
+═══════════════════════════════════════════════════════════════
+
+STEP 1: Open phpMyAdmin
+────────────────────────
+1. Start MySQL in XAMPP Control Panel
+2. Go to: http://localhost/phpmyadmin
+3. Click "SQL" tab at the top
+
+STEP 2: Copy and Run SQL
+─────────────────────────
+Copy the ENTIRE content from: CLEAN_DATABASE_SETUP.sql
+Paste into SQL tab in phpMyAdmin
+Click "Go" button
+
+STEP 3: Create Admin User
+───────────────────────────
+Run this command in terminal:
+  node CREATE_ADMIN_SCRIPT.js
+
+OR manually in SQL:
+  INSERT INTO users (email, password, full_name, user_type, phone) VALUES
+  ('admin@travel.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Admin User', 'admin', NULL);
+
+STEP 4: Verify
+──────────────
+In phpMyAdmin, run:
+  SELECT * FROM users WHERE email = 'admin@travel.com';
+
+Should show admin user with user_type = 'admin'
+
+═══════════════════════════════════════════════════════════════
+
+ADMIN LOGIN CREDENTIALS:
+─────────────────────────
+Email: admin@travel.com
+Password: admin123
+User Type: admin
+
+Login at: http://localhost:3000
+Click "Admin" tab, then enter credentials above
+
+═══════════════════════════════════════════════════════════════

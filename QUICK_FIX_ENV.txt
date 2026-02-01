@@ -1,0 +1,62 @@
+═══════════════════════════════════════════════════════════════
+  QUICK FIX: Database Access Denied Error
+═══════════════════════════════════════════════════════════════
+
+YOUR MYSQL PASSWORD IS: 123
+
+STEP 1: Create/Update .env File
+────────────────────────────────
+1. In project root folder, create file named: .env
+2. Copy this EXACT content:
+
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=123
+DB_NAME=travel_agency_db
+PORT=3000
+JWT_SECRET=secret123
+
+3. Save the file
+
+CRITICAL:
+─────────
+✅ DB_PASSWORD=123 (no quotes, no spaces)
+✅ File name: .env (with the dot)
+✅ Location: Same folder as package.json
+
+STEP 2: Verify .env File
+─────────────────────────
+Run: node check-env.js
+
+Should show:
+✅ .env file found
+✅ DB_PASSWORD is set: "123"
+✅ .env file looks good!
+
+STEP 3: Test Password
+──────────────────────
+Run: node test-db-connection.js
+
+Should show: ✅ SUCCESS! Password "123" works!
+
+STEP 4: Restart Server
+──────────────────────
+1. Stop server: Ctrl+C
+2. Start again: npm start
+
+Should show:
+🔑 Database password being used: "123" (3 chars)
+   DB_PASSWORD: "123"
+✅ Database connected successfully
+
+═══════════════════════════════════════════════════════════════
+
+COMMON MISTAKES:
+────────────────
+❌ DB_PASSWORD="123"     ← Has quotes
+❌ DB_PASSWORD = 123     ← Has spaces  
+❌ DB_PASSWORD=          ← Empty (wrong!)
+
+✅ DB_PASSWORD=123       ← CORRECT!
+
+═══════════════════════════════════════════════════════════════

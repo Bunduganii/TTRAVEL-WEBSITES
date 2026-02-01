@@ -1,0 +1,157 @@
+-- ============================================
+-- RECREATE ENTIRE DATABASE - COPY ALL THIS
+-- ============================================
+
+-- Step 1: Create Database
+CREATE DATABASE IF NOT EXISTS travel_agency_db;
+USE travel_agency_db;
+
+-- Step 2: Create Users Table
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    full_name VARCHAR(255) NOT NULL,
+    user_type ENUM('customer', 'admin') DEFAULT 'customer',
+    phone VARCHAR(20),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_email (email),
+    INDEX idx_user_type (user_type)
+);
+
+-- Step 3: Create Flights Table
+CREATE TABLE flights (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    airline VARCHAR(100) NOT NULL,
+    flight_number VARCHAR(20) NOT NULL,
+    aircraft VARCHAR(50),
+    origin_code VARCHAR(10) NOT NULL,
+    origin_name VARCHAR(255) NOT NULL,
+    destination_code VARCHAR(10) NOT NULL,
+    destination_name VARCHAR(255) NOT NULL,
+    departure_time TIME NOT NULL,
+    arrival_time TIME NOT NULL,
+    duration VARCHAR(20) NOT NULL,
+    stops INT DEFAULT 0,
+    stop_duration VARCHAR(20),
+    fare_type VARCHAR(50),
+    price DECIMAL(10, 2) NOT NULL,
+    available_seats INT DEFAULT 100,
+    departure_date DATE NOT NULL,
+    return_date DATE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_origin (origin_code),
+    INDEX idx_destination (destination_code),
+    INDEX idx_departure_date (departure_date)
+);
+
+-- Step 4: Create Hotels Table
+CREATE TABLE hotels (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    location VARCHAR(255) NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    country VARCHAR(100) NOT NULL,
+    star_rating INT DEFAULT 3,
+    price_per_night DECIMAL(10, 2) NOT NULL,
+    commission DECIMAL(10, 2) DEFAULT 0,
+    amenities TEXT,
+    description TEXT,
+    image_url VARCHAR(500),
+    latitude DECIMAL(10, 8),
+    longitude DECIMAL(11, 8),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_city (city),
+    INDEX idx_country (country),
+    INDEX idx_star_rating (star_rating)
+);
+
+-- Step 5: Create Packages Table
+CREATE TABLE packages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    destination VARCHAR(255) NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    country VARCHAR(100) NOT NULL,
+    duration_days INT NOT NULL,
+    duration_nights INT NOT NULL,
+    original_price DECIMAL(10, 2) NOT NULL,
+    discounted_price DECIMAL(10, 2) NOT NULL,
+    rating DECIMAL(3, 1) DEFAULT 0,
+    trip_type VARCHAR(50),
+    inclusions TEXT,
+    description TEXT,
+    image_url VARCHAR(500),
+    badge VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_destination (destination),
+    INDEX idx_trip_type (trip_type)
+);
+
+-- Step 6: Create Bookings Table
+CREATE TABLE bookings (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    booking_type ENUM('flight', 'hotel', 'package') NOT NULL,
+    flight_id INT,
+    hotel_id INT,
+    package_id INT,
+    booking_date DATE NOT NULL,
+    check_in_date DATE,
+    check_out_date DATE,
+    travelers INT DEFAULT 1,
+    total_amount DECIMAL(10, 2) NOT NULL,
+    status VARCHAR(50) DEFAULT 'pending',
+    payment_method VARCHAR(50),
+    payment_status VARCHAR(50) DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (flight_id) REFERENCES flights(id) ON DELETE SET NULL,
+    FOREIGN KEY (hotel_id) REFERENCES hotels(id) ON DELETE SET NULL,
+    FOREIGN KEY (package_id) REFERENCES packages(id) ON DELETE SET NULL,
+    INDEX idx_user_id (user_id),
+    INDEX idx_status (status),
+    INDEX idx_booking_type (booking_type)
+);
+
+-- Step 7: Insert Admin User
+-- Email: admin@travel.com
+-- Password: admin123
+INSERT INTO users (email, password, full_name, user_type, phone) VALUES
+('admin@travel.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Admin User', 'admin', NULL);
+
+-- Step 8: Insert Sample Flights
+INSERT INTO flights (airline, flight_number, aircraft, origin_code, origin_name, destination_code, destination_name, departure_time, arrival_time, duration, stops, fare_type, price, departure_date) VALUES
+('Delta', 'DL 452', 'Boeing 777', 'JFK', 'John F. Kennedy Airport', 'LHR', 'London Heathrow Airport', '08:00:00', '14:55:00', '6h 55m', 0, 'Eco Flex', 580.00, '2024-10-24'),
+('British Airways', 'BA 117', 'Airbus A350', 'JFK', 'John F. Kennedy Airport', 'LHR', 'London Heathrow Airport', '10:30:00', '18:45:00', '8h 15m', 1, 'Economy', 520.00, '2024-10-24'),
+('Virgin Atlantic', 'VS 045', 'Airbus A330', 'JFK', 'John F. Kennedy Airport', 'LHR', 'London Heathrow Airport', '13:20:00', '20:25:00', '7h 05m', 0, 'Premium', 615.00, '2024-10-24'),
+('Emirates', 'EK 202', 'Boeing 777', 'DXB', 'Dubai International Airport', 'JFK', 'John F. Kennedy Airport', '02:30:00', '08:15:00', '13h 45m', 0, 'Economy', 850.00, '2024-10-25'),
+('Qatar Airways', 'QR 701', 'Airbus A380', 'DOH', 'Hamad International Airport', 'CDG', 'Charles de Gaulle Airport', '01:00:00', '06:30:00', '6h 30m', 0, 'Business', 1200.00, '2024-10-26');
+
+-- Step 9: Insert Sample Hotels
+INSERT INTO hotels (name, location, city, country, star_rating, price_per_night, commission, amenities, description, image_url) VALUES
+('Grand Skyline Tokyo', 'Shinjuku Ward', 'Tokyo', 'Japan', 5, 185.00, 25.00, 'Free WiFi,Breakfast Included,Pool', 'Luxurious hotel in the heart of Tokyo', '/images/hotel1.jpg'),
+('Shibuya Crossing Inn', 'Shibuya', 'Tokyo', 'Japan', 4, 145.00, 18.00, 'Free WiFi,Gym', 'Modern hotel near Shibuya station', '/images/hotel2.jpg'),
+('Asakusa Ryokan Heritage', 'Asakusa', 'Tokyo', 'Japan', 5, 260.00, 40.00, 'Free WiFi,Onsen/Spa,Breakfast Included', 'Traditional Japanese ryokan experience', '/images/hotel3.jpg'),
+('Parisian Elegance Hotel', 'Champs-Élysées', 'Paris', 'France', 5, 220.00, 30.00, 'Free WiFi,Breakfast Included,Spa', 'Elegant hotel in the heart of Paris', '/images/hotel4.jpg'),
+('London Bridge View', 'Southwark', 'London', 'United Kingdom', 4, 180.00, 22.00, 'Free WiFi,Gym,Breakfast Included', 'Modern hotel with river views', '/images/hotel5.jpg');
+
+-- Step 10: Insert Sample Packages
+INSERT INTO packages (title, destination, city, country, duration_days, duration_nights, original_price, discounted_price, rating, trip_type, inclusions, description, image_url, badge) VALUES
+('Santorini Sunset Getaway', 'Santorini, Greece', 'Santorini', 'Greece', 5, 4, 1800.00, 1499.00, 4.9, 'Romantic', 'Flight Included,4-Star Hotel,Breakfast', 'Experience the beautiful sunsets of Santorini', '/images/santorini.jpg', 'Best Seller'),
+('Kyoto Cultural Immersion', 'Kyoto, Japan', 'Kyoto', 'Japan', 7, 6, 2400.00, 2100.00, 4.8, 'Cultural', 'Rail Pass,Ryokan Stay,Guide', 'Discover traditional Japanese culture', '/images/kyoto.jpg', 'All-Inclusive'),
+('Cappadocia Dream', 'Cappadocia, Turkey', 'Cappadocia', 'Turkey', 4, 3, 1200.00, 999.00, 5.0, 'Adventure', 'Flight Included,Cave Hotel,Photo Shoot', 'Hot air balloon adventure', '/images/cappadocia.jpg', 'Adventure'),
+('Bali Paradise Escape', 'Bali, Indonesia', 'Bali', 'Indonesia', 6, 5, 1500.00, 1299.00, 4.7, 'Beach', 'Flight Included,5-Star Resort,All Meals', 'Relax on beautiful beaches', '/images/bali.jpg', 'Popular'),
+('Swiss Alps Adventure', 'Interlaken, Switzerland', 'Interlaken', 'Switzerland', 5, 4, 2200.00, 1999.00, 4.9, 'Adventure', 'Flight Included,Mountain Hotel,Activities', 'Mountain hiking and skiing', '/images/swiss.jpg', 'Premium');
+
+-- Step 11: Insert Sample Bookings
+INSERT INTO bookings (user_id, booking_type, flight_id, hotel_id, booking_date, travelers, total_amount, status, payment_status) VALUES
+(1, 'flight', 1, NULL, '2024-10-15', 2, 1160.00, 'confirmed', 'paid'),
+(1, 'hotel', NULL, 1, '2024-10-12', 2, 555.00, 'confirmed', 'paid');
+
+-- ============================================
+-- DONE! Database recreated successfully
+-- ============================================
+-- Admin Login:
+-- Email: admin@travel.com
+-- Password: admin123
