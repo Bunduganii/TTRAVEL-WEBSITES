@@ -73,31 +73,59 @@ app.get('/signup', (req, res) => {
 });
 
 // ============================================
+// Ensure admin@travel.com exists with password admin123 (works on any machine)
+// ============================================
+async function ensureAdminUser() {
+    try {
+        const db = require('./config/database');
+        const bcrypt = require('bcryptjs');
+        const adminEmail = 'admin@travel.com';
+        const adminPassword = 'admin123';
+        const hashedPassword = await bcrypt.hash(adminPassword, 10);
+        const [existing] = await db.execute('SELECT id FROM users WHERE email = ?', [adminEmail]);
+        if (existing.length > 0) {
+            await db.execute(
+                'UPDATE users SET password = ?, full_name = ?, user_type = ? WHERE email = ?',
+                [hashedPassword, 'Admin User', 'admin', adminEmail]
+            );
+        } else {
+            await db.execute(
+                'INSERT INTO users (email, password, full_name, user_type) VALUES (?, ?, ?, ?)',
+                [adminEmail, hashedPassword, 'Admin User', 'admin']
+            );
+        }
+        console.log('Admin ready: admin@travel.com / admin123');
+    } catch (err) {
+        console.warn('Could not ensure admin user (DB may not be ready yet):', err.message);
+    }
+}
+
+// ============================================
 // Start Server with Port Conflict Handling
 // ============================================
-const server = app.listen(PORT, () => {
-    console.log(`Travel Agency Server running on http://localhost:${PORT}`);
-});
-
-// Handle port already in use error
-server.on('error', (err) => {
-    if (err.code === 'EADDRINUSE') {
-        console.log(`Port ${PORT} is busy. Trying port ${PORT + 1}...`);
-        server.close();
-        app.listen(PORT + 1, () => {
-            console.log(`Travel Agency Server running on http://localhost:${PORT + 1}`);
-        });
-    } else {
-        console.error('Server error:', err);
-    }
-});
+let server;
+(async function start() {
+    await ensureAdminUser();
+    server = app.listen(PORT, () => {
+        console.log(`Travel Agency Server running on http://localhost:${PORT}`);
+    });
+    server.on('error', (err) => {
+        if (err.code === 'EADDRINUSE') {
+            console.log(`Port ${PORT} is busy. Trying port ${PORT + 1}...`);
+            server.close();
+            app.listen(PORT + 1, () => {
+                console.log(`Travel Agency Server running on http://localhost:${PORT + 1}`);
+            });
+        } else {
+            console.error('Server error:', err);
+        }
+    });
+})();
 
 // Graceful shutdown
 process.on('SIGINT', () => {
     console.log('\nShutting down server...');
-    server.close(() => {
-        console.log('Server closed.');
-        process.exit(0);
-    });
+    if (server) server.close(() => { console.log('Server closed.'); process.exit(0); });
+    else process.exit(0);
 });
 

@@ -70,18 +70,31 @@ document.addEventListener('DOMContentLoaded', function() {
             const location = document.getElementById('hotelLocation').value;
             
             try {
-                const response = await fetch(`/api/hotels/search?city=${location}`);
+                const response = await fetch(`/api/hotels/search?city=${encodeURIComponent(location)}`);
                 const data = await response.json();
                 
                 if (data.success) {
-                    displayHotels(data.hotels);
+                    allHotels = data.hotels || [];
+                    applyHotelFilters();
                 }
             } catch (error) {
                 console.error('Hotel search error:', error);
             }
         });
-        
-        // Load initial hotels
+        document.body.addEventListener('click', function hotelDetailsDelegation(e) {
+            var btn = e.target.closest('#hotelResults .btn-hotel-details');
+            if (!btn) return;
+            e.preventDefault();
+            var name = btn.getAttribute('data-hotel-name') || 'Hotel';
+            var price = btn.getAttribute('data-hotel-price') || '0';
+            var location = btn.getAttribute('data-hotel-location') || '';
+            var html = '<table><tr><td>Name</td><td>' + escapeHtml(name) + '</td></tr><tr><td>Location</td><td>' + escapeHtml(location) + '</td></tr><tr><td>Price per night</td><td style="font-weight:600;color:var(--primary);">$' + parseFloat(price).toFixed(2) + '</td></tr></table>';
+            if (typeof showAdvancedModal === 'function') {
+                showAdvancedModal({ title: 'Hotel Details', html: html, type: 'info', icon: '🏨' });
+            } else {
+                alert(name + '\n' + location + '\n$' + price + ' / night');
+            }
+        });
         loadHotels();
     }
     
@@ -291,17 +304,47 @@ function displayFlights(flights) {
 // ============================================
 // Load Hotels
 // ============================================
+let allHotels = [];
+
 async function loadHotels() {
     try {
         const response = await fetch('/api/hotels');
         const data = await response.json();
         
         if (data.success) {
-            displayHotels(data.hotels);
+            allHotels = data.hotels || [];
+            setupHotelPriceFilter();
+            applyHotelFilters();
         }
     } catch (error) {
         console.error('Error loading hotels:', error);
     }
+}
+
+function setupHotelPriceFilter() {
+    const slider = document.getElementById('hotelPriceSlider');
+    const valueEl = document.getElementById('hotelPriceValue');
+    if (!slider || !valueEl) return;
+    valueEl.textContent = 'Up to $' + parseInt(slider.value, 10);
+    slider.addEventListener('input', function() {
+        valueEl.textContent = 'Up to $' + parseInt(this.value, 10);
+        applyHotelFilters();
+    });
+    slider.addEventListener('change', function() {
+        applyHotelFilters();
+    });
+}
+
+function applyHotelFilters() {
+    const slider = document.getElementById('hotelPriceSlider');
+    const maxPrice = slider ? parseFloat(slider.value) || 800 : 800;
+    const filtered = (allHotels || []).filter(function(h) {
+        var p = parseFloat(h.price_per_night) || 0;
+        return p <= maxPrice;
+    });
+    displayHotels(filtered);
+    const countEl = document.getElementById('hotelCount');
+    if (countEl) countEl.textContent = filtered.length === 0 ? 'No hotels' : (filtered.length === 1 ? '1 hotel' : filtered.length + ' hotels');
 }
 
 // ============================================
@@ -312,36 +355,42 @@ function displayHotels(hotels) {
     if (!resultsContainer) return;
     
     resultsContainer.innerHTML = '';
+    if (!hotels || hotels.length === 0) {
+        resultsContainer.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div class="icon">🏨</div><h3>No hotels match your filters</h3><p>Try increasing the price limit or search another location.</p></div>';
+        return;
+    }
     
     hotels.forEach(hotel => {
         const hotelCard = document.createElement('div');
         hotelCard.className = 'hotel-card';
+        const priceNight = parseFloat(hotel.price_per_night) || 0;
+        const total3 = priceNight * 3;
         hotelCard.innerHTML = `
-            <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=300" alt="${hotel.name}" class="hotel-image">
+            <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=300" alt="${escapeHtml(hotel.name)}" class="hotel-image">
             <div class="hotel-details">
                 <div style="display: flex; justify-content: space-between; align-items: start;">
                     <div>
-                        <h3 class="hotel-name">${hotel.name}</h3>
-                        <div class="hotel-location">📍 ${hotel.location} • 0.5km from center</div>
+                        <h3 class="hotel-name">${escapeHtml(hotel.name)}</h3>
+                        <div class="hotel-location">📍 ${escapeHtml(hotel.location || '')} • 0.5km from center</div>
                         <div class="amenities-list">
-                            ${hotel.amenities ? hotel.amenities.split(',').map(a => `<span>${a.trim()}</span>`).join('') : ''}
+                            ${hotel.amenities ? hotel.amenities.split(',').map(a => '<span>' + escapeHtml(a.trim()) + '</span>').join('') : ''}
                         </div>
                     </div>
                     <div style="text-align: right;">
-                        <div style="font-size: 24px; font-weight: 700; color: #6BB6FF;">$${hotel.price_per_night}</div>
+                        <div style="font-size: 24px; font-weight: 700; color: #6BB6FF;">$${priceNight.toFixed(2)}</div>
                         <div style="font-size: 12px; color: #7f8c8d;">/ night</div>
-                        <div style="margin-top: 10px; font-size: 14px; color: #7f8c8d;">Total for 3 nights: $${hotel.price_per_night * 3}</div>
-                        <div style="font-size: 12px; color: #27ae60; margin-top: 5px;">Earn $${hotel.commission} commission</div>
+                        <div style="margin-top: 10px; font-size: 14px; color: #7f8c8d;">Total for 3 nights: $${total3.toFixed(2)}</div>
+                        <div style="font-size: 12px; color: #27ae60; margin-top: 5px;">Earn $${(hotel.commission || 0)} commission</div>
                     </div>
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
                     <div>
-                        <div style="font-weight: 600;">${'⭐'.repeat(hotel.star_rating)} ${hotel.star_rating}.0 Excellent</div>
+                        <div style="font-weight: 600;">${'⭐'.repeat(hotel.star_rating || 0)} ${(hotel.star_rating || 0)}.0 Excellent</div>
                         <div style="font-size: 12px; color: #7f8c8d;">Based on 1,204 reviews</div>
                     </div>
                     <div style="display: flex; gap: 10px;">
-                        <button class="btn-secondary">Details</button>
-                        <button class="btn-primary" onclick="bookHotel(${hotel.id}, ${hotel.price_per_night * 3})">Book Now →</button>
+                        <button type="button" class="btn-secondary btn-hotel-details" data-hotel-id="${hotel.id}" data-hotel-name="${escapeHtml(hotel.name)}" data-hotel-price="${priceNight}" data-hotel-location="${escapeHtml(hotel.location || '')}">Details</button>
+                        <button class="btn-primary" onclick="bookHotel(${hotel.id}, ${total3})">Book Now →</button>
                     </div>
                 </div>
             </div>
@@ -423,18 +472,16 @@ function setupPackageSearch() {
 }
 
 function setupPackageFilters() {
-    // Price slider - update display and filter
-    const priceSlider = document.querySelector('.price-slider');
-    const priceValue = document.getElementById('priceValue');
+    var priceSlider = document.getElementById('packagePriceSlider') || document.querySelector('#packagesGrid') && document.querySelector('.price-slider');
+    if (!priceSlider) priceSlider = document.querySelector('.price-slider');
+    var priceValue = document.getElementById('priceValue');
     if (priceSlider) {
-        // Set initial display
         if (priceValue) {
-            priceValue.textContent = '$' + parseFloat(priceSlider.value).toLocaleString();
+            priceValue.textContent = 'Up to $' + parseFloat(priceSlider.value).toLocaleString();
         }
-        // Update on change
         priceSlider.addEventListener('input', function() {
             if (priceValue) {
-                priceValue.textContent = '$' + parseFloat(this.value).toLocaleString();
+                priceValue.textContent = 'Up to $' + parseFloat(this.value).toLocaleString();
             }
             filterPackages();
         });
@@ -493,12 +540,12 @@ function filterPackages() {
     }
     
     // Price filter - apply if slider is not at max (5000)
-    const priceSlider = document.querySelector('.price-slider');
+    var priceSlider = document.getElementById('packagePriceSlider') || document.querySelector('.price-slider');
     if (priceSlider) {
-        const sliderValue = parseFloat(priceSlider.value) || 5000;
+        var sliderValue = parseFloat(priceSlider.value) || 5000;
         if (sliderValue < 5000) {
-            filtered = filtered.filter(pkg => {
-                const price = parseFloat(pkg.discounted_price || pkg.original_price || 0);
+            filtered = filtered.filter(function(pkg) {
+                var price = parseFloat(pkg.discounted_price || pkg.original_price || 0);
                 return price <= sliderValue;
             });
         }

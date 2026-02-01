@@ -141,7 +141,8 @@ function createTripCard(b) {
     const d = b.booking_date ? new Date(b.booking_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
     const amt = parseFloat(b.total_amount || 0);
     const fallbackImg = 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400';
-    return '<div class="trip-card"><img src="' + escapeHtml(img) + '" alt="' + escapeHtml(title) + '" class="thumb" onerror="this.src=\'' + fallbackImg + '\'"><div class="body"><div class="meta"><span class="type-badge">' + icon + '</span><span class="status ' + statusClass + '">' + (b.status || 'pending').toUpperCase() + '</span></div><div class="title">' + escapeHtml(title) + '</div><div class="date">📅 ' + d + '</div><div class="footer"><span class="price">$' + amt.toFixed(2) + '</span><button class="btn-secondary" style="padding:8px 14px;" onclick="viewDetails(' + b.id + ')">Details</button></div></div></div>';
+    var bid = (b.id != null && b.id !== undefined) ? b.id : '';
+    return '<div class="trip-card"><img src="' + escapeHtml(img) + '" alt="' + escapeHtml(title) + '" class="thumb" onerror="this.src=\'' + fallbackImg + '\'"><div class="body"><div class="meta"><span class="type-badge">' + icon + '</span><span class="status ' + statusClass + '">' + (b.status || 'pending').toUpperCase() + '</span></div><div class="title">' + escapeHtml(title) + '</div><div class="date">📅 ' + d + '</div><div class="footer"><span class="price">$' + amt.toFixed(2) + '</span><button type="button" class="btn-secondary btn-view-details" style="padding:8px 14px;" data-booking-id="' + bid + '">Details</button></div></div></div>';
 }
 
 function escapeHtml(text) {
@@ -261,48 +262,39 @@ function closeModal() {
 }
 
 function viewDetails(id) {
-    const b = allBookings.find(x => x.id === id);
+    var idNum = typeof id === 'string' ? parseInt(id, 10) : Number(id);
+    var b = allBookings.find(function(x) { return x.id === idNum || x.id === id; });
     if (!b) {
         if (typeof showErrorModal === 'function') {
             showErrorModal('Booking details not found.', 'Not Found');
+        } else {
+            alert('Booking details not found.');
         }
         return;
     }
-    
-    const title = getTitle(b);
-    const date = b.booking_date ? new Date(b.booking_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '—';
-    const icon = { flight: '✈️', hotel: '🏨', package: '📦' }[b.booking_type] || '🎫';
-    const statusColor = b.status === 'confirmed' ? '#059669' : '#f59e0b';
-    
-    const html = `
-        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding: 16px; background: var(--surface-hover); border-radius: var(--radius);">
-            <div style="font-size: 32px;">${icon}</div>
-            <div>
-                <div style="font-weight: 600; font-size: 16px; margin-bottom: 4px;">${title}</div>
-                <div style="font-size: 13px; color: var(--text-muted);">${b.booking_type.toUpperCase()}</div>
-            </div>
-        </div>
-        <table>
-            <tr><td>Booking ID</td><td>#${b.id}</td></tr>
-            <tr><td>Type</td><td>${b.booking_type.charAt(0).toUpperCase() + b.booking_type.slice(1)}</td></tr>
-            <tr><td>Amount</td><td style="font-weight: 600; color: var(--primary);">$${parseFloat(b.total_amount || 0).toFixed(2)}</td></tr>
-            <tr><td>Status</td><td><span style="padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; background: ${statusColor}15; color: ${statusColor};">${(b.status || 'pending').toUpperCase()}</span></td></tr>
-            <tr><td>Booking Date</td><td>${date}</td></tr>
-            ${b.check_in_date ? `<tr><td>Check-in</td><td>${new Date(b.check_in_date).toLocaleDateString()}</td></tr>` : ''}
-            ${b.check_out_date ? `<tr><td>Check-out</td><td>${new Date(b.check_out_date).toLocaleDateString()}</td></tr>` : ''}
-            ${b.travelers ? `<tr><td>Travelers</td><td>${b.travelers}</td></tr>` : ''}
-        </table>
-    `;
-    
+    var bookingType = b.booking_type || 'booking';
+    var title = getTitle(b);
+    var date = b.booking_date ? new Date(b.booking_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '—';
+    var icon = { flight: '✈️', hotel: '🏨', package: '📦' }[bookingType] || '🎫';
+    var statusColor = (b.status || '') === 'confirmed' ? '#059669' : '#f59e0b';
+    var typeLabel = bookingType.charAt(0).toUpperCase() + bookingType.slice(1);
+    var html = '<div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding: 16px; background: var(--surface-hover); border-radius: var(--radius);">' +
+        '<div style="font-size: 32px;">' + icon + '</div><div>' +
+        '<div style="font-weight: 600; font-size: 16px; margin-bottom: 4px;">' + escapeHtml(title) + '</div>' +
+        '<div style="font-size: 13px; color: var(--text-muted);">' + bookingType.toUpperCase() + '</div></div></div>' +
+        '<table><tr><td>Booking ID</td><td>#' + b.id + '</td></tr>' +
+        '<tr><td>Type</td><td>' + typeLabel + '</td></tr>' +
+        '<tr><td>Amount</td><td style="font-weight: 600; color: var(--primary);">$' + parseFloat(b.total_amount || 0).toFixed(2) + '</td></tr>' +
+        '<tr><td>Status</td><td><span style="padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; background: ' + statusColor + '15; color: ' + statusColor + ';">' + (b.status || 'pending').toUpperCase() + '</span></td></tr>' +
+        '<tr><td>Booking Date</td><td>' + date + '</td></tr>' +
+        (b.check_in_date ? '<tr><td>Check-in</td><td>' + new Date(b.check_in_date).toLocaleDateString() + '</td></tr>' : '') +
+        (b.check_out_date ? '<tr><td>Check-out</td><td>' + new Date(b.check_out_date).toLocaleDateString() + '</td></tr>' : '') +
+        (b.travelers ? '<tr><td>Travelers</td><td>' + b.travelers + '</td></tr>' : '') +
+        '</table>';
     if (typeof showAdvancedModal === 'function') {
-        showAdvancedModal({
-            title: 'Booking Details',
-            html: html,
-            type: 'info',
-            icon: icon
-        });
+        showAdvancedModal({ title: 'Booking Details', html: html, type: 'info', icon: icon });
     } else {
-        alert(`Type: ${b.booking_type}\nAmount: $${b.total_amount}\nStatus: ${b.status}\nDate: ${date}`);
+        alert('Type: ' + bookingType + '\nAmount: $' + b.total_amount + '\nStatus: ' + (b.status || 'pending') + '\nDate: ' + date);
     }
 }
 
@@ -326,6 +318,14 @@ function openTab(tab) {
     if (nav) nav.classList.add('active');
 }
 
-document.addEventListener('click', e => {
+document.addEventListener('click', function(e) {
     if (e.target.classList.contains('modal-overlay')) closeModal();
+    var detailsBtn = e.target.closest('.btn-view-details[data-booking-id]');
+    if (detailsBtn) {
+        e.preventDefault();
+        var id = detailsBtn.getAttribute('data-booking-id');
+        if (id !== '' && id !== null) viewDetails(id);
+    }
 });
+
+window.viewDetails = viewDetails;
