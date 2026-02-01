@@ -154,19 +154,13 @@ npm install
    ```
    Use empty `DB_PASSWORD=` if MySQL has no password. If MySQL has a password, set it here.
 
-5. **Create admin user** (so you can log in as admin):
-   ```bash
-   node CREATE_ADMIN_SCRIPT.js
-   ```
-   This creates/updates **admin@travel.com** with password **admin123**.
-
-6. **Run server**:
+5. **Run server** (admin is already in the database: **admin@travel.com** / **admin123**):
    ```bash
    npm start
    ```
    You should see: `✅ Database connected successfully`
 
-7. Open **http://localhost:3000** in your browser.
+6. Open **http://localhost:3000**. Log in with **Admin** tab → **admin@travel.com** / **admin123**.
 
 ---
 
@@ -196,12 +190,9 @@ npm install
 - Use **eye icons** on password fields to show/hide.
 - Submit → account created → redirect to login.
 
-### Default admin account
+### Default admin account (in database after importing `schema.sql`)
 
-- **Admin**: Run `node CREATE_ADMIN_SCRIPT.js` once, then log in with:
-  - **Email:** `admin@travel.com`
-  - **Password:** `admin123`
-  - Select the **Admin** tab on the login page.
+- **Email:** `admin@travel.com` · **Password:** `admin123` · Select the **Admin** tab, then Sign in.
 - **Customer**: Register via Signup.
 
 ---

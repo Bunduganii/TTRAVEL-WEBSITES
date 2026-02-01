@@ -119,8 +119,11 @@ CREATE TABLE IF NOT EXISTS bookings (
 
 -- Insert Sample Data
 
--- Sample Users (run seed script for admin password)
--- Admin: admin@travel.com / admin123
+-- Admin user (login: admin@travel.com / admin123)
+-- Password hash is for "admin123". ON DUPLICATE KEY so re-import or existing DB still works.
+INSERT INTO users (id, email, password, full_name, user_type) VALUES
+(1, 'admin@travel.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Admin User', 'admin')
+ON DUPLICATE KEY UPDATE password = VALUES(password), full_name = VALUES(full_name), user_type = VALUES(user_type);
 
 -- Sample Flights
 INSERT INTO flights (airline, flight_number, aircraft, origin_code, origin_name, destination_code, destination_name, departure_time, arrival_time, duration, stops, fare_type, price, departure_date) VALUES
