@@ -103,8 +103,10 @@ TTRAVEL/
 │   ├── packages.html
 │   └── payment.html
 ├── server.js                # Express app, middleware, routes, static files, HTML routes
-├── schema.sql               # DB schema + seed data
+├── schema.sql               # DB schema
+├── CREATE_ADMIN_SCRIPT.js   # Run once: creates admin@travel.com / admin123
 ├── package.json
+├── .env.example             # Copy to .env and set DB_* if needed
 └── README.md
 ```
 
@@ -127,40 +129,36 @@ TTRAVEL/
 
 ## Installation
 
-### Quick Setup (New Installation)
-
-**📋 See `QUICK_SETUP.txt` or `SETUP_NEW_INSTALLATION.md` for detailed instructions!**
-
 1. **Install Node.js** (v16+): [nodejs.org](https://nodejs.org/)
 2. **Install MySQL/MariaDB**: e.g. via [XAMPP](https://www.apachefriends.org/)
 
 ```bash
-# Clone or download project, then:
+git clone <your-repo-url>
 cd TTRAVEL
 npm install
 ```
 
 3. **Setup Database**:
-   - Start MySQL in XAMPP
-   - Create database `travel_agency_db` in phpMyAdmin
-   - Import `schema.sql`
+   - Start MySQL (e.g. XAMPP).
+   - Create database `travel_agency_db` in phpMyAdmin (or `CREATE DATABASE travel_agency_db;`).
+   - Import `schema.sql` in phpMyAdmin.
 
-4. **Find MySQL Password**:
-   ```bash
-   node test-db-connection.js
-   ```
-   This will test common passwords and tell you which one works!
-
-5. **Create `.env` file** in project root:
+4. **Create `.env` file** in project root (copy from `.env.example`):
    ```
    DB_HOST=localhost
    DB_USER=root
-   DB_PASSWORD=your_password_here
+   DB_PASSWORD=
    DB_NAME=travel_agency_db
    PORT=3000
    JWT_SECRET=secret123
    ```
-   **Important**: Replace `your_password_here` with the password from step 4!
+   Use empty `DB_PASSWORD=` if MySQL has no password. If MySQL has a password, set it here.
+
+5. **Create admin user** (so you can log in as admin):
+   ```bash
+   node CREATE_ADMIN_SCRIPT.js
+   ```
+   This creates/updates **admin@travel.com** with password **admin123**.
 
 6. **Run server**:
    ```bash
@@ -168,11 +166,7 @@ npm install
    ```
    You should see: `✅ Database connected successfully`
 
-7. Open `http://localhost:3000` in your browser.
-
-**📋 For detailed setup instructions, see:**
-- `QUICK_SETUP.txt` - Quick reference guide
-- `SETUP_NEW_INSTALLATION.md` - Complete guide with troubleshooting
+7. Open **http://localhost:3000** in your browser.
 
 ---
 
@@ -180,12 +174,10 @@ npm install
 
 1. Start MySQL (e.g. XAMPP).
 2. Create database: `CREATE DATABASE IF NOT EXISTS travel_agency_db;`
-3. Import `schema.sql` via phpMyAdmin, MySQL Workbench, or:
-
+3. Import `schema.sql` via phpMyAdmin or:
    ```bash
-   mysql -u root -p travel_agency_db < schema.sql
+   mysql -u root travel_agency_db < schema.sql
    ```
-
 4. Adjust `DB_*` in `.env` if your setup differs.
 
 ---
@@ -204,10 +196,13 @@ npm install
 - Use **eye icons** on password fields to show/hide.
 - Submit → account created → redirect to login.
 
-### Default accounts (if seeded via `schema.sql`)
+### Default admin account
 
-- **Admin**: See `CREDENTIALS.md` or `LOGIN_CREDENTIALS.md` in the project.
-- **Customer**: Register via Signup or use seeded customer if defined in `schema.sql`.
+- **Admin**: Run `node CREATE_ADMIN_SCRIPT.js` once, then log in with:
+  - **Email:** `admin@travel.com`
+  - **Password:** `admin123`
+  - Select the **Admin** tab on the login page.
+- **Customer**: Register via Signup.
 
 ---
 

@@ -28,6 +28,14 @@ router.post('/login', async (req, res) => {
         
         const user = users[0];
         
+        // If they typed the stored hash instead of the real password, help them
+        if (password && (password.startsWith('$2a$') || password.startsWith('$2b$'))) {
+            return res.status(400).json({
+                success: false,
+                message: 'You entered the password hash. Type your actual password (e.g. admin123), not the hash from the database.'
+            });
+        }
+        
         // ============================================
         // Customer vs Admin only
         // ============================================
